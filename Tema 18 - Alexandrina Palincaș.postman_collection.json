@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "797ab83c-6bcd-4362-9927-a3daafc30dd4",
+		"name": "Tema 18 - Alexandrina Palincaș",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50881165",
+		"_collection_link": "https://alexandrina-tudosiev-7340244.postman.co/workspace/42d6095d-ac4e-490b-8c9c-5cc7e2cc62e9/collection/50881165-797ab83c-6bcd-4362-9927-a3daafc30dd4?action=share&source=collection_link&creator=50881165"
+	},
+	"item": [
+		{
+			"name": "01- Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const ts = Date.now();\r",
+							"\r",
+							"pm.environment.set(\"first_name\", \"Test\");\r",
+							"pm.environment.set(\"last_name\", \"User\");\r",
+							"pm.environment.set(\"email\", `test_auto_${ts}@mail.com`);\r",
+							"pm.environment.set(\"password\", \"Password123!\");\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Register success\", function () {\r",
+							"  pm.expect(json.status).to.eql(\"success\");\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"api_key\", json.api_key);\r",
+							"pm.environment.set(\"username\", json.username);\r",
+							"pm.environment.set(\"user_id\", json.user_id);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"first_name\": \"{{first_name}}\",\r\n  \"last_name\": \"{{last_name}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/register.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"register.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02 - Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Login status is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.environment.set(\"token\", json.token);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/login.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"login.php"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03 - Get profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Get Profile: status 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const json = pm.response.json();\r",
+							"const expectedEmail = pm.environment.get(\"email\");\r",
+							"\r",
+							"const actualEmail = json.email || (json.user && json.user.email);\r",
+							"\r",
+							"pm.test(\"Profile email matches generated email\", function () {\r",
+							"  pm.expect(actualEmail).to.eql(expectedEmail);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/get_profile.php?user_id={{user_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"get_profile.php"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "{{user_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04 - Delete Profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Delete Profile: status is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/user/delete_profile.php",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"delete_profile.php"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
