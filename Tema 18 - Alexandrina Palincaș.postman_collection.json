@@ -19,7 +19,7 @@
 							"pm.environment.set(\"first_name\", \"Test\");\r",
 							"pm.environment.set(\"last_name\", \"User\");\r",
 							"pm.environment.set(\"email\", `test_auto_${ts}@mail.com`);\r",
-							"pm.environment.set(\"password\", \"Password123!\");\r",
+							"pm.environment.set(\"password\", \"Password****\");\r",
 							""
 						],
 						"type": "text/javascript",
